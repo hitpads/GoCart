@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GoCart</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
+</head>
+<body>
+  <header>
+    <h1>GoCart</h1>
+    <nav>
+      <ul>
+        <li><a href="/products">Products</a></li>
+        <li><a href="/order">Orders</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <main>
+    <section id="products">
+      <h2>Products</h2>
+      <div class="product-list" id="productList">
+        <!-- product cards here -->
+      </div>
+    </section>
+    
+    <section id="orders">
+      <h2>Orders</h2>
+      <div class="order-list" id="orderList">
+        <!-- order cards here -->
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 GoCart, Inc.</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // (sample, TODO fetch from the API Gateway).
+      const products = [
+        { id: "1", name: "Product A", description: "High quality product A.", price: 10.99, stock: 50, category: "Electronics" },
+        { id: "2", name: "Product B", description: "Reliable product B.", price: 15.99, stock: 30, category: "Books" },
+        { id: "3", name: "Product C", description: "Top-rated product C.", price: 8.99, stock: 20, category: "Clothing" }
+      ];
+      
+      const productList = document.getElementById('productList');
+      products.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <h3>${product.name}</h3>
+          <p>${product.description}</p>
+          <p><strong>Price:</strong> $${product.price.toFixed(2)}</p>
+          <p><strong>In Stock:</strong> ${product.stock}</p>
+          <p><strong>Category:</strong> ${product.category}</p>
+        `;
+        productList.appendChild(card);
+      });
+      
+      // Sample orders (TODO fetche from the gateway).
+      const orders = [
+        { id: "101", user_id: "user1", items: [{ product_id: "1", quantity: 2, price: 10.99 }], status: "pending", created_at: "2025-04-01" },
+        { id: "102", user_id: "user2", items: [{ product_id: "2", quantity: 1, price: 15.99 }], status: "completed", created_at: "2025-04-02" }
+      ];
+      
+      const orderList = document.getElementById('orderList');
+      orders.forEach(order => {
+        const card = document.createElement('div');
+        card.className = 'order-card';
+        let orderItems = order.items.map(item => `<span>Product ID: ${item.product_id} (x${item.quantity})</span>`).join('<br>');
+        card.innerHTML = `
+          <h3>Order #${order.id}</h3>
+          <p><strong>User:</strong> ${order.user_id}</p>
+          <p><strong>Items:</strong><br>${orderItems}</p>
+          <p><strong>Status:</strong> ${order.status}</p>
+          <p><strong>Created At:</strong> ${order.created_at}</p>
+        `;
+        orderList.appendChild(card);
+      });
+    });
+  </script>
+</body>
+</html>
