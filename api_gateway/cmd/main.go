@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"io"
 	"log"
 	"net/http"
@@ -15,6 +16,17 @@ const (
 
 // forward the incoming HTTP request to the target URL
 func proxyRequest(c *gin.Context, targetURL string) {
+	// Log the incoming request body for debugging
+	bodyBytes, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to read request body"})
+		return
+	}
+	log.Printf("Incoming request body: %s", string(bodyBytes))
+
+	// Recreate the request body for forwarding
+	c.Request.Body = io.NopCloser(io.MultiReader(bytes.NewReader(bodyBytes)))
+
 	req, err := http.NewRequest(c.Request.Method, targetURL+c.Request.RequestURI, c.Request.Body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create request"})
@@ -30,12 +42,12 @@ func proxyRequest(c *gin.Context, targetURL string) {
 	}
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
+	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to read response"})
 		return
 	}
-	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), body)
+	c.Data(resp.StatusCode, resp.Header.Get("Content-Type"), respBody)
 }
 
 func main() {

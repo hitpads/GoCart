@@ -1,6 +1,9 @@
 package http
 
 import (
+	"bytes"
+	"io"
+	"log"
 	"net/http"
 
 	"GoCart/inventory/internal/domain"
@@ -31,12 +34,28 @@ func RegisterProductRoutes(router *gin.Engine, productUC usecases.ProductUseCase
 
 func (h *ProductHandler) CreateProduct(c *gin.Context) {
 	var p domain.Product
+	// Read and log the raw body
+	bodyBytes, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Printf("Error reading body: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+	log.Printf("Raw request body: %s", string(bodyBytes))
+
+	// reset the body so it can be read again by ShouldBindJSON
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
 	if err := c.ShouldBindJSON(&p); err != nil {
+		log.Printf("Failed to bind JSON: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	p.ID = uuid.New().String()
+	log.Printf("Creating product: %+v", p)
+
 	if err := h.productUC.CreateProduct(&p); err != nil {
+		log.Printf("Failed to create product: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
