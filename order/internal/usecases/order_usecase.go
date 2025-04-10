@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// define business methods for orders
+// business methods
 type OrderUseCase interface {
 	CreateOrder(o *domain.Order) error
 	GetOrderByID(id string) (*domain.Order, error)
@@ -19,7 +19,7 @@ type orderUseCase struct {
 	repo repository.OrderRepository
 }
 
-// create a new OrderUseCase
+// create new OrderUseCase
 func NewOrderUseCase(repo repository.OrderRepository) OrderUseCase {
 	return &orderUseCase{repo: repo}
 }

@@ -14,9 +14,9 @@ const (
 	orderServiceURL     = "http://localhost:8002"
 )
 
-// forward the incoming HTTP request to the target URL
+// redir incoming request to target port
 func proxyRequest(c *gin.Context, targetURL string) {
-	// Log the incoming request body for debugging
+
 	bodyBytes, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to read request body"})
@@ -24,7 +24,7 @@ func proxyRequest(c *gin.Context, targetURL string) {
 	}
 	log.Printf("Incoming request body: %s", string(bodyBytes))
 
-	// Recreate the request body for forwarding
+	// RECREATE request body for redirecting
 	c.Request.Body = io.NopCloser(io.MultiReader(bytes.NewReader(bodyBytes)))
 
 	req, err := http.NewRequest(c.Request.Method, targetURL+c.Request.RequestURI, c.Request.Body)

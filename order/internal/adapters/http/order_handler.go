@@ -10,12 +10,10 @@ import (
 	"github.com/google/uuid"
 )
 
-// handles HTTP requests for orders
 type OrderHandler struct {
 	orderUC usecases.OrderUseCase
 }
 
-// register order-related routes
 func RegisterOrderRoutes(router *gin.Engine, orderUC usecases.OrderUseCase) {
 	handler := &OrderHandler{orderUC: orderUC}
 
@@ -34,7 +32,7 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	// generate new order ID
+	// generate new order id
 	o.ID = uuid.New().String()
 	if err := h.orderUC.CreateOrder(&o); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

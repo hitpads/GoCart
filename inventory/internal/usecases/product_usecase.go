@@ -6,7 +6,7 @@ import (
 	"errors"
 )
 
-// business methods for product operations
+// business methods
 type ProductUseCase interface {
 	CreateProduct(p *domain.Product) error
 	GetProductByID(id string) (*domain.Product, error)
@@ -19,7 +19,7 @@ type productUseCase struct {
 	repo repository.ProductRepository
 }
 
-// init a new ProductUseCase
+// init product use case
 func NewProductUseCase(repo repository.ProductRepository) ProductUseCase {
 	return &productUseCase{repo: repo}
 }

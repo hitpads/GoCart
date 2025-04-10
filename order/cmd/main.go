@@ -25,7 +25,7 @@ func main() {
 		log.Fatal("MongoDB connection failed:", err)
 	}
 
-	// Verify connection
+	// verify connection
 	err = client.Ping(ctx, nil)
 	if err != nil {
 		log.Fatal("MongoDB ping failed:", err)

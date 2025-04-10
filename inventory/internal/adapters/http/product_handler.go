@@ -13,12 +13,11 @@ import (
 	"github.com/google/uuid"
 )
 
-// handle HTTP requests for products
 type ProductHandler struct {
 	productUC usecases.ProductUseCase
 }
 
-// register product-related routes
+// check product related routes
 func RegisterProductRoutes(router *gin.Engine, productUC usecases.ProductUseCase) {
 	handler := &ProductHandler{productUC: productUC}
 
@@ -34,7 +33,7 @@ func RegisterProductRoutes(router *gin.Engine, productUC usecases.ProductUseCase
 
 func (h *ProductHandler) CreateProduct(c *gin.Context) {
 	var p domain.Product
-	// Read and log the raw body
+	// read / log raw body
 	bodyBytes, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Printf("Error reading body: %v", err)
@@ -43,7 +42,7 @@ func (h *ProductHandler) CreateProduct(c *gin.Context) {
 	}
 	log.Printf("Raw request body: %s", string(bodyBytes))
 
-	// reset the body so it can be read again by ShouldBindJSON
+	// reset body so it can be read again by ShouldBindJSON
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 	if err := c.ShouldBindJSON(&p); err != nil {
